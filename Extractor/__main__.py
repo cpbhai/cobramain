@@ -11,27 +11,22 @@ async def sumit_boot():
         importlib.import_module("Extractor.modules." + all_module)
 
     print("» ʙᴏᴛ ᴅᴇᴘʟᴏʏ sᴜᴄᴄᴇssғᴜʟʟʏ ✨ 🎉")
-
-    # Wait until the bot is stopped manually or SIGTERM is caught
     await idle()
-
     print("» ɢᴏᴏᴅ ʙʏᴇ ! sᴛᴏᴘᴘɪɴɢ ʙᴏᴛ.")
 
-
 def handle_sigterm():
-    """Cancel all running tasks to exit cleanly."""
-    for task in asyncio.all_tasks(loop):
+    for task in asyncio.all_tasks():
         task.cancel()
 
-
 if __name__ == "__main__":
-    # Register SIGTERM handler for graceful shutdown
     signal.signal(signal.SIGTERM, lambda s, f: handle_sigterm())
 
     try:
         loop.run_until_complete(sumit_boot())
     except asyncio.CancelledError:
         pass
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
     finally:
         loop.run_until_complete(loop.shutdown_asyncgens())
         loop.close()
