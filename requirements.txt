@@ -1,4 +1,4 @@
-pyrofork
+pyrogram==2.0.106
 aiohttp
 motor
 tgcrypto
@@ -8,7 +8,7 @@ hachoir
 cloudscraper
 Unidecode
 pycryptodome
-pytz
+py7z
 httpx
 bs4
 gunicorn
