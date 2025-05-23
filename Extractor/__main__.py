@@ -1,37 +1,26 @@
-import asyncio
 import importlib
-import signal
 from pyrogram import Client
 from Extractor.modules import ALL_MODULES
+import os
 
-loop = asyncio.get_event_loop()
-shutdown_event = asyncio.Event()
+# Get config from environment variables (set these in Heroku)
+API_ID = int(os.environ.get("API_ID", ""))
+API_HASH = os.environ.get("API_HASH", "")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
-async def sumit_boot():
-    for all_module in ALL_MODULES:
-        importlib.import_module("Extractor.modules." + all_module)
+# Initialize the Pyrogram Client
+app = Client(
+    "main_bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
+)
 
-    print("» ʙᴏᴛ ᴅᴇᴘʟᴏʏ sᴜᴄᴄᴇssғᴜʟʟʏ ✨ 🎉")
+# Import all modules dynamically
+for all_module in ALL_MODULES:
+    importlib.import_module("Extractor.modules." + all_module)
 
-    # Wait until shutdown_event is set
-    await shutdown_event.wait()
-
-    print("» ɢᴏᴏᴅ ʙʏᴇ ! sᴛᴏᴘᴘɪɴɢ ʙᴏᴛ.")
-
-def handle_sigterm():
-    shutdown_event.set()  # Triggers the wait to finish
-    for task in asyncio.all_tasks():
-        task.cancel()
+print("» ʙᴏᴛ ᴅᴇᴘʟᴏʏ sᴜᴄᴄᴇssғᴜʟʟʏ ✨ 🎉")
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGTERM, lambda s, f: handle_sigterm())
-
-    try:
-        loop.run_until_complete(sumit_boot())
-    except asyncio.CancelledError:
-        pass
-    except Exception as e:
-        print(f"Unexpected error occurred: {e}")
-    finally:
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.close()
+    app.run()
